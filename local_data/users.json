@@ -1,0 +1,20 @@
+{
+  "users": {
+    "demo": {
+      "password": "demo",
+      "bankroll": 1000.0
+    },
+    "Evan": {
+      "password": "1234",
+      "bankroll": 968.29
+    },
+    "Evan2": {
+      "password": "12345",
+      "bankroll": 1015.0
+    },
+    "Evan Weller": {
+      "password": "12345",
+      "bankroll": 980.0
+    }
+  }
+}
