@@ -1,20 +1,28 @@
 def settle_contracts(contracts, state, winners, hand_name):
     winner_names = {w.name for w in winners} if winners else set()
-    showdown_happened = hand_name != "Uncontested"
+    showdown_happened = hand_name != 'Uncontested'
+    board_text = {str(card) for card in state.community_cards}
 
-    for c in contracts:
-        if c.contract_type == "player_win":
-            c.outcome = c.target in winner_names
+    for contract in contracts:
+        if contract.contract_type == 'player_win':
+            contract.outcome = contract.target in winner_names
 
-        elif c.contract_type == "flop_has_ace":
+        elif contract.contract_type == 'flop_has_ace':
             flop = state.community_cards[:3]
-            c.outcome = any(card.rank == "A" for card in flop)
+            contract.outcome = any(card.rank == 'A' for card in flop)
 
-        elif c.contract_type == "showdown_occurs":
-            c.outcome = showdown_happened
+        elif contract.contract_type == 'showdown_occurs':
+            contract.outcome = showdown_happened
+
+        elif contract.contract_type == 'specific_board_card':
+            contract.outcome = contract.target in board_text
+
+        elif contract.contract_type == 'specific_player_card':
+            player = next((p for p in state.players if p.name == contract.target_player), None)
+            contract.outcome = bool(player and any(str(card) == contract.target for card in player.hole_cards))
 
         else:
-            c.outcome = False
+            contract.outcome = False
 
-        c.resolved = True
-        c.is_open = False
+        contract.resolved = True
+        contract.is_open = False

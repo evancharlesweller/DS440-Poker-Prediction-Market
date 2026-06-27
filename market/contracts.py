@@ -8,16 +8,13 @@ class Contract:
     description: str
     contract_type: str
     target: Optional[str] = None
+    target_player: Optional[str] = None
     price: float = 0.0
 
     # Lifecycle
     is_open: bool = True
     resolved: bool = False
     outcome: Optional[bool] = None
-
-    # Closure rules
-    closes_after_street: Optional[str] = None
-    close_immediately_on_street_reveal: bool = False
 
     def status_text(self) -> str:
         if self.resolved:

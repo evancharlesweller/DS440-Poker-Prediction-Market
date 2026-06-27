@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Optional
 
 
 @dataclass
@@ -9,7 +10,7 @@ class Bet:
     price: float
     shares: float
     resolved: bool = False
-    won: bool | None = None
+    won: Optional[bool] = None
     payout: float = 0.0
 
 
