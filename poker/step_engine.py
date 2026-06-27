@@ -80,7 +80,9 @@ class StepHandEngine:
             winner.stack += self.state.pot
             self.winners = [winner]
             self.hand_name = "Uncontested"
+            self.state.reveal_all_hole_cards = True
             self.state.log(f"{winner.name} wins uncontested pot of {self.state.pot}")
+            self.state.log("Hand finished: all hole cards revealed to the table view")
             self.phase = "finished"
             self.dealer_index = (self.dealer_index + 1) % len(self.players)
 
@@ -131,6 +133,8 @@ class StepHandEngine:
             names = ", ".join(w.name for w in winners)
             self.state.log(f"Showdown winners: {names} with {hand_name}")
 
+        self.state.reveal_all_hole_cards = True
+        self.state.log("Showdown complete: all hole cards revealed to the table view")
         self.phase = "finished"
         self.dealer_index = (self.dealer_index + 1) % len(self.players)
 

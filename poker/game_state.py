@@ -13,6 +13,8 @@ class GameState:
     street: str = "preflop"
     current_bet: int = 0
     action_log: list = field(default_factory=list)
+    reveal_all_hole_cards: bool = False
+    revealed_players: set = field(default_factory=set)
 
     def reset_bets_for_new_street(self):
         self.current_bet = 0
