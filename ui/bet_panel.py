@@ -42,6 +42,7 @@ class BetPanel(QWidget):
             quick_row.addWidget(btn)
 
         self.place_bet_btn = QPushButton('Place Bet')
+        self.custom_card_bet_btn = QPushButton('Custom Card Bet')
 
         self.open_bets_label = QLabel('Open Bets')
         self.open_bets_list = QListWidget()
@@ -58,6 +59,7 @@ class BetPanel(QWidget):
         card_layout.addWidget(self.stake_input)
         card_layout.addLayout(quick_row)
         card_layout.addWidget(self.place_bet_btn)
+        card_layout.addWidget(self.custom_card_bet_btn)
         card_layout.addWidget(self.open_bets_label)
         card_layout.addWidget(self.open_bets_list)
         card.setLayout(card_layout)

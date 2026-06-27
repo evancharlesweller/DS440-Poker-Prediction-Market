@@ -104,7 +104,7 @@ class PlayerSeat(QFrame):
         self.style().unpolish(self)
         self.style().polish(self)
 
-    def render_player(self, player, is_active: bool = False, is_dealer: bool = False, blind_role: str | None = None):
+    def render_player(self, player, is_active: bool = False, is_dealer: bool = False, blind_role=None, reveal_cards: bool = False):
         status = []
         if player.folded:
             status.append('FOLDED')
@@ -116,7 +116,10 @@ class PlayerSeat(QFrame):
             status.insert(0, 'TURN')
 
         self.name_label.setText(player.name)
-        self.cards_label.setText('🂠  🂠')
+        if reveal_cards and player.hole_cards:
+            self.cards_label.setText('  '.join(str(card) for card in player.hole_cards))
+        else:
+            self.cards_label.setText('🂠  🂠')
         self.stack_chip.setText(f'Stack  {player.stack}')
         self.bet_chip.setText(f'Live Bet  {player.current_bet}')
         self.status_label.setText(f"Status: {' | '.join(status)}")
@@ -141,7 +144,7 @@ class TableView(QWidget):
         self.header_label.setAlignment(Qt.AlignCenter)
         self.header_label.setStyleSheet('font-size: 24px; font-weight: 800; color: #f8fafc;')
 
-        self.subheader_label = QLabel('Spectator View — hole cards hidden during betting')
+        self.subheader_label = QLabel('Spectator View — hole cards hidden until showdown')
         self.subheader_label.setAlignment(Qt.AlignCenter)
         self.subheader_label.setStyleSheet('font-size: 12px; color: #94a3b8;')
 
@@ -313,10 +316,13 @@ class TableView(QWidget):
         )
 
     def render_state(self, state, phase: str | None = None):
-        current_phase = (phase or 'idle').upper()
+        phase_normalized = (phase or "idle").lower()
+        reveal_cards = bool(state and getattr(state, "reveal_all_hole_cards", False)) or phase_normalized == "finished"
+        current_phase = phase_normalized.upper()
         self.phase_label.setText(f'Phase: {current_phase}')
 
         if state is None:
+            self.subheader_label.setText('Spectator View — hole cards hidden until showdown')
             self.street_label.setText('Street: --')
             self.pot_label.setText('Pot: 0')
             self.pot_chip.setText('Main Pot\n0')
@@ -326,6 +332,11 @@ class TableView(QWidget):
             for i, seat in enumerate(self.seats, start=1):
                 seat.render_waiting(i)
             return
+
+        if reveal_cards:
+            self.subheader_label.setText('Hand complete — all player hole cards revealed')
+        else:
+            self.subheader_label.setText('Spectator View — hole cards hidden until showdown')
 
         self.street_label.setText(f'Street: {state.street.upper()}')
         self.pot_label.setText(f'Pot: {state.pot}')
@@ -353,4 +364,5 @@ class TableView(QWidget):
                 is_active=(i == active_index),
                 is_dealer=(i == dealer_index),
                 blind_role=blind_role,
+                reveal_cards=reveal_cards,
             )

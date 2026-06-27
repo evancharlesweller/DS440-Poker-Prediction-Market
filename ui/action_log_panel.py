@@ -27,4 +27,5 @@ class ActionLogPanel(QWidget):
         self.setLayout(layout)
 
     def render_log(self, action_log):
+        self.log_box.clear()
         self.log_box.setPlainText('\n'.join(action_log))

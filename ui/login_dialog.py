@@ -22,11 +22,12 @@ class LoginDialog(QDialog):
         self.user_record = None
 
         self.title_label = QLabel('Local Demo Login')
-        self.title_label.setStyleSheet('font-size: 20px; font-weight: 700;')
+        self.title_label.setStyleSheet('font-size: 20px; font-weight: 700; color: #e2e8f0;')
         self.info_label = QLabel(
             'Use the built-in demo account (demo / demo) or create a new local user.'
         )
         self.info_label.setWordWrap(True)
+        self.info_label.setStyleSheet('color: #e2e8f0;')
 
         self.username_input = QLineEdit()
         self.username_input.setPlaceholderText('Username')
@@ -57,7 +58,7 @@ class LoginDialog(QDialog):
 
         self.setStyleSheet(
             '''
-            QDialog { background: #12161f; color: #edf2f7; }
+            QDialog { background: #12161f; color: white; }
             QLineEdit {
                 background: #1d2330;
                 border: 1px solid #394355;
@@ -77,14 +78,17 @@ class LoginDialog(QDialog):
             '''
         )
 
+
+
     def _credentials(self):
         return self.username_input.text().strip(), self.password_input.text()
 
     def _handle_login(self):
         username, password = self._credentials()
         user = self.auth.authenticate(username, password)
+
         if not user:
-            QMessageBox.warning(self, 'Login Failed', 'Invalid username or password.')
+            show_warning(self, "Login Failed", "Invalid username or password.")
             return
         self.user_record = user
         self.accept()
@@ -94,12 +98,54 @@ class LoginDialog(QDialog):
         try:
             user = self.auth.register_user(username, password)
         except ValueError as exc:
-            QMessageBox.warning(self, 'Registration Failed', str(exc))
+            show_warning(self, 'Registration Failed', str(exc))
             return
         self.user_record = user
-        QMessageBox.information(
-            self,
-            'Registration Complete',
-            f"Created local user '{username}'. You are now logged in.",
-        )
+        show_info(self, 'Registration Complete', f"Created local user '{username}'. You are now logged in.")
         self.accept()
+
+def show_warning(parent, title, text):
+    msg = QMessageBox(parent)
+    msg.setIcon(QMessageBox.Warning)
+    msg.setWindowTitle(title)
+    msg.setText(text)
+
+    msg.setStyleSheet("""
+        QMessageBox {
+            background-color: #12161f;
+        }
+        QLabel {
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+        QPushButton {
+            color: #e2e8f0;
+            background-color: #3182ce;
+            padding: 5px 12px;
+        }
+    """)
+
+    msg.exec_()
+
+def show_info(parent, title, text):
+    msg = QMessageBox(parent)
+    msg.setIcon(QMessageBox.Information)
+    msg.setWindowTitle(title)
+    msg.setText(text)
+
+    msg.setStyleSheet("""
+        QMessageBox {
+            background-color: #12161f;
+        }
+        QLabel {
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+        QPushButton {
+            color: #e2e8f0;
+            background-color: #3182ce;
+            padding: 5px 12px;
+        }
+    """)
+
+    msg.exec_()
